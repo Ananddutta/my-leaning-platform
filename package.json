@@ -1,0 +1,28 @@
+{
+  "name": "lakshya-learning-platform",
+  "version": "1.0.0",
+  "description": "Learning platform with social authentication",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-facebook": "^3.0.0",
+    "express-session": "^1.17.3",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "cookie-parser": "^1.4.6",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "validator": "^13.9.0",
+    "axios": "^1.6.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+} 

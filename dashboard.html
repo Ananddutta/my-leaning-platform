@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #6C5CE7;
+            --secondary-color: #A8A4E6;
+            --success-color: #00B894;
+            --info-color: #00CEC9;
+            --warning-color: #FDCB6E;
+            --danger-color: #FF7675;
+            --light-color: #F5F6FA;
+            --dark-color: #2D3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #F5F7FA 0%, #C3CFE2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-color) 0%, #5B4BC4 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 15px 25px;
+            margin: 4px 0;
+            transition: all 0.3s;
+            border-radius: 10px;
+            margin: 0 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            overflow: hidden;
+            background: white;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Stats Card Styles */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .stat-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.2;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1);
+            opacity: 0.3;
+        }
+
+        /* Welcome Section Styles */
+        .welcome-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            transition: all 0.3s;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Table Styles */
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background: var(--light-color);
+            border-bottom: 2px solid #e3e6f0;
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .badge:hover {
+            transform: scale(1.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5B4BC4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="text-center mb-4">
+                    <img src="https://via.placeholder.com/80" alt="Logo" class="rounded-circle mb-3" style="width: 80px; height: 80px;">
+                    <h4>Student Portal</h4>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#courses">
+                            <i class="fas fa-book"></i> My Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#liveClasses">
+                            <i class="fas fa-video"></i> Live Classes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#subjectNotes">
+                            <i class="fas fa-sticky-note"></i> Subject Notes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#calendar">
+                            <i class="fas fa-calendar-alt"></i> Calendar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#practiceTests">
+                            <i class="fas fa-clipboard-check"></i> Practice Tests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#doubtSession">
+                            <i class="fas fa-question-circle"></i> Doubt Sessions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#assignments">
+                            <i class="fas fa-tasks"></i> Assignments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#formulaSets">
+                            <i class="fas fa-calculator"></i> Formula Sets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#progress">
+                            <i class="fas fa-chart-line"></i> Progress
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <!-- Welcome Section -->
+                <div class="welcome-section d-flex align-items-center justify-content-between">
+                    <div>
+                        <h3>Welcome back, Student!</h3>
+                        <p class="text-muted mb-0">Here's what's happening with your learning today.</p>
+                    </div>
+                    <img src="https://via.placeholder.com/60" alt="Profile" class="profile-img">
+                </div>
+
+                <!-- Class Selection -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Select Your Class</h5>
+                        <div class="btn-group w-100">
+                            <button type="button" class="btn btn-outline-primary class-btn" data-class="9">Class 9</button>
+                            <button type="button" class="btn btn-outline-primary class-btn" data-class="10">Class 10</button>
+                            <button type="button" class="btn btn-outline-primary class-btn" data-class="11">Class 11</button>
+                            <button type="button" class="btn btn-outline-primary class-btn" data-class="12">Class 12</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Classes Section -->
+                <div id="liveClasses" class="mb-4">
+                    <h4 class="mb-3">Live Classes</h4>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">Live Now</span>
+                                    <h5 class="card-title">Physics Class</h5>
+                                    <p class="card-text">Motion in a Straight Line</p>
+                                    <p class="text-muted"><i class="fas fa-clock me-2"></i>10:00 AM - 11:30 AM</p>
+                                    <p class="text-muted"><i class="fas fa-user me-2"></i>Mr. Sharma</p>
+                                    <a href="#" class="btn btn-primary w-100">Join Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="badge bg-warning position-absolute top-0 end-0 mt-2 me-2">In 30 Min</span>
+                                    <h5 class="card-title">Chemistry Class</h5>
+                                    <p class="card-text">Chemical Bonding</p>
+                                    <p class="text-muted"><i class="fas fa-clock me-2"></i>11:30 AM - 1:00 PM</p>
+                                    <p class="text-muted"><i class="fas fa-user me-2"></i>Ms. Gupta</p>
+                                    <a href="#" class="btn btn-outline-primary w-100">Reminder</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="badge bg-info position-absolute top-0 end-0 mt-2 me-2">Upcoming</span>
+                                    <h5 class="card-title">Mathematics Class</h5>
+                                    <p class="card-text">Trigonometric Functions</p>
+                                    <p class="text-muted"><i class="fas fa-clock me-2"></i>2:00 PM - 3:30 PM</p>
+                                    <p class="text-muted"><i class="fas fa-user me-2"></i>Mr. Verma</p>
+                                    <a href="#" class="btn btn-outline-primary w-100">Set Reminder</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <a href="#" class="btn btn-link">View All Live Classes <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Subject Notes Section -->
+                <div id="subjectNotes" class="mb-4">
+                    <h4 class="mb-3">Subject Notes</h4>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="rounded-circle bg-danger p-2 me-3">
+                                            <i class="fas fa-atom text-white"></i>
+                                        </span>
+                                        <h5 class="card-title mb-0">Physics</h5>
+                                    </div>
+                                    <p class="card-text">Complete chapter-wise notes with diagrams and explanations.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">View Notes</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="rounded-circle bg-success p-2 me-3">
+                                            <i class="fas fa-flask text-white"></i>
+                                        </span>
+                                        <h5 class="card-title mb-0">Chemistry</h5>
+                                    </div>
+                                    <p class="card-text">Detailed notes with chemical equations and reactions.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">View Notes</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="rounded-circle bg-primary p-2 me-3">
+                                            <i class="fas fa-square-root-alt text-white"></i>
+                                        </span>
+                                        <h5 class="card-title mb-0">Mathematics</h5>
+                                    </div>
+                                    <p class="card-text">Comprehensive notes with solved examples and step-by-step solutions.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">View Notes</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="rounded-circle bg-warning p-2 me-3">
+                                            <i class="fas fa-dna text-white"></i>
+                                        </span>
+                                        <h5 class="card-title mb-0">Biology</h5>
+                                    </div>
+                                    <p class="card-text">Illustrated notes with diagrams and important concepts highlighted.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">View Notes</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <a href="#" class="btn btn-link">View All Notes <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Calendar Section -->
+                <div id="calendar" class="mb-4">
+                    <h4 class="mb-3">Academic Calendar</h4>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="calendarPlaceholder" style="height: 300px; background-color: #f8f9fa; border-radius: 10px; display: flex; justify-content: center; align-items: center;">
+                                <p class="text-muted">Calendar will load here. View your upcoming classes, exams, and assignments.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Practice Tests Section -->
+                <div id="practiceTests" class="mb-4">
+                    <h4 class="mb-3">Practice Tests</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title mb-0">Weekly Test Series</h5>
+                                        <span class="badge bg-success">New</span>
+                                    </div>
+                                    <p class="card-text">Chapter-wise tests with detailed solutions and performance analytics.</p>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75% Completed</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="#" class="btn btn-outline-primary">Continue</a>
+                                        <a href="#" class="btn btn-link">View Results</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title mb-0">Full Mock Tests</h5>
+                                        <span class="badge bg-warning">Recommended</span>
+                                    </div>
+                                    <p class="card-text">Full-length mock tests simulating actual exam conditions with timer and detailed analytics.</p>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">40% Completed</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="#" class="btn btn-outline-primary">Continue</a>
+                                        <a href="#" class="btn btn-link">View Results</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <a href="#" class="btn btn-link">View All Tests <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Doubt Sessions Section -->
+                <div id="doubtSession" class="mb-4">
+                    <h4 class="mb-3">Doubt Solving Sessions</h4>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Teacher</th>
+                                            <th>Schedule</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Physics</td>
+                                            <td>Mr. Sharma</td>
+                                            <td>Tuesday, 4:00 PM - 5:00 PM</td>
+                                            <td><span class="badge bg-success">Available</span></td>
+                                            <td><a href="#" class="btn btn-sm btn-primary">Book Slot</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Chemistry</td>
+                                            <td>Ms. Gupta</td>
+                                            <td>Wednesday, 5:00 PM - 6:00 PM</td>
+                                            <td><span class="badge bg-warning">Few Slots Left</span></td>
+                                            <td><a href="#" class="btn btn-sm btn-primary">Book Slot</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mathematics</td>
+                                            <td>Mr. Verma</td>
+                                            <td>Thursday, 4:00 PM - 5:00 PM</td>
+                                            <td><span class="badge bg-danger">Booked</span></td>
+                                            <td><a href="#" class="btn btn-sm btn-outline-primary">Join Waitlist</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Biology</td>
+                                            <td>Dr. Singh</td>
+                                            <td>Friday, 5:00 PM - 6:00 PM</td>
+                                            <td><span class="badge bg-success">Available</span></td>
+                                            <td><a href="#" class="btn btn-sm btn-primary">Book Slot</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignments Section -->
+                <div id="assignments" class="mb-4">
+                    <h4 class="mb-3">Assignments</h4>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100 border-danger">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="card-title">Physics Assignment</h5>
+                                        <span class="badge bg-danger">Due Tomorrow</span>
+                                    </div>
+                                    <p class="card-text">Laws of Motion - Numerical Problems</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="progress" style="width: 70%">
+                                            <div class="progress-bar bg-danger" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">30%</div>
+                                        </div>
+                                        <a href="#" class="btn btn-danger btn-sm">Complete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="card-title">Chemistry Assignment</h5>
+                                        <span class="badge bg-warning">Due in 3 Days</span>
+                                    </div>
+                                    <p class="card-text">Periodic Table and Elements</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="progress" style="width: 70%">
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
+                                        </div>
+                                        <a href="#" class="btn btn-warning btn-sm">Continue</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="card-title">Mathematics Assignment</h5>
+                                        <span class="badge bg-success">Completed</span>
+                                    </div>
+                                    <p class="card-text">Quadratic Equations and Expressions</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="progress" style="width: 70%">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+                                        </div>
+                                        <a href="#" class="btn btn-success btn-sm">View Score</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <a href="#" class="btn btn-link">View All Assignments <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Formula Sets Section -->
+                <div id="formulaSets" class="mb-4">
+                    <h4 class="mb-3">Formula Sets</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Physics Formulas</h5>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-light text-dark">Kinematics</span>
+                                        <span class="badge bg-light text-dark">Dynamics</span>
+                                        <span class="badge bg-light text-dark">Electricity</span>
+                                        <span class="badge bg-light text-dark">Magnetism</span>
+                                        <span class="badge bg-light text-dark">Optics</span>
+                                    </div>
+                                    <p class="card-text">Quick reference guide to all important physics formulas with explanations.</p>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="#" class="btn btn-outline-primary">Download PDF</a>
+                                        <a href="#" class="btn btn-link">View Online</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Mathematics Formulas</h5>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-light text-dark">Algebra</span>
+                                        <span class="badge bg-light text-dark">Calculus</span>
+                                        <span class="badge bg-light text-dark">Trigonometry</span>
+                                        <span class="badge bg-light text-dark">Geometry</span>
+                                        <span class="badge bg-light text-dark">Statistics</span>
+                                    </div>
+                                    <p class="card-text">Comprehensive collection of math formulas with examples and applications.</p>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="#" class="btn btn-outline-primary">Download PDF</a>
+                                        <a href="#" class="btn btn-link">View Online</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <a href="#" class="btn btn-link">View All Formula Sets <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Dashboard JavaScript -->
+    <script src="/js/dashboard.js"></script>
+</body>
+</html> 
